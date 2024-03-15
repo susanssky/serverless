@@ -16,9 +16,6 @@ resource "aws_api_gateway_method" "method" {
   http_method   = local.flatten-object[count.index].methodName
   authorization = "NONE"
 }
-output "xx" {
-  value = flatten(var.object[*].methodName)
-}
 
 # Every method request must add an integration request. It must be added.
 resource "aws_api_gateway_integration" "integration" {
