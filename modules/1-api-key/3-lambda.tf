@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda-role" {
-  name = "lambda-role"
+  name = "${var.prefix}-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -20,12 +20,12 @@ resource "aws_iam_role_policy_attachment" "test-attach" {
 
 data "archive_file" "dynamodb_stream_lambda_function" {
   type        = "zip"
-  source_file = "index.js"
-  output_path = "lambdademo.zip"
+  source_file = "../modules/1-api-key/index.js"
+  output_path = "../modules/1-api-key/index.zip"
 }
 
 resource "aws_lambda_function" "lambda-function" {
-  function_name = "serverless-api"
+  function_name = "${var.prefix}-lambda-fn"
   # s3_bucket     = aws_s3_bucket.lambda_bucket.id
   # s3_key        = "lambdademo.zip"
   filename = data.archive_file.dynamodb_stream_lambda_function.output_path
@@ -60,5 +60,5 @@ data "aws_iam_policy_document" "example" {
 resource "aws_iam_role_policy" "lambda-role-policy" {
   policy = data.aws_iam_policy_document.example.json
   role   = aws_iam_role.lambda-role.id
-  name   = "my-lambda-policy"
+  name   = "${var.prefix}-my-lambda-policy"
 }

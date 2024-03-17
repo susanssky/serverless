@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
-  name                        = "product-inventory"
+  name                        = "${var.prefix}-product-inventory"
   billing_mode                = "PROVISIONED"
   read_capacity               = 5
   write_capacity              = 5

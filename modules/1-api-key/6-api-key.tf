@@ -1,5 +1,5 @@
 resource "aws_api_gateway_api_key" "example" {
-  name = "customer-1"
+  name = "${var.prefix}-customer-1"
 }
 resource "aws_api_gateway_usage_plan" "example" {
   name         = "premium-plan"

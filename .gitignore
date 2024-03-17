@@ -1,5 +1,5 @@
-*.zip
-*.hcl
-*.tfstate*
-*.terraform
-*.DS_Store
+**.zip
+**.hcl
+**.tfstate*
+**.terraform
+**.DS_Store

@@ -1,17 +1,13 @@
+variable "prefix" {}
+variable "api_key_required" {}
 variable "policy_arns" {
   default = [
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
     "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
   ]
 }
+variable "object" {}
 
-variable "object" {
-  default = [
-    { resourceName = "health", methodName = "GET" },
-    { resourceName = "product", methodName = ["GET", "POST", "PATCH", "DELETE"] },
-    { resourceName = "products", methodName = "GET" }
-  ]
-}
 
 locals {
   flatten-object = flatten([
@@ -52,3 +48,5 @@ locals {
 #     "resourceName" = "products"
 #   },
 # ]
+
+

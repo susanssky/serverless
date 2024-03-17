@@ -3,7 +3,7 @@ const AWS = require('aws-sdk')
 //   region: 'eu-west-2',
 // })
 const dynamodb = new AWS.DynamoDB.DocumentClient()
-const dynamodbTableName = 'product-inventory'
+const dynamodbTableName = 'basic-product-inventory'
 const healthPath = '/health'
 const productPath = '/product'
 const productsPath = '/products'
