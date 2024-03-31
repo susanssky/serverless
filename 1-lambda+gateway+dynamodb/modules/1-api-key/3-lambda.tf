@@ -1,4 +1,4 @@
-resource "aws_iam_role" "lambda-role" {
+resource "aws_iam_role" "role" {
   name = "${var.prefix}-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -14,7 +14,7 @@ resource "aws_iam_role" "lambda-role" {
 
 resource "aws_iam_role_policy_attachment" "test-attach" {
   count      = length(var.policy_arns)
-  role       = aws_iam_role.lambda-role.name
+  role       = aws_iam_role.role.name
   policy_arn = var.policy_arns[count.index]
 }
 
@@ -31,7 +31,7 @@ resource "aws_lambda_function" "lambda-function" {
   filename = data.archive_file.dynamodb_stream_lambda_function.output_path
   # source_code_hash = filebase64sha256("lambda_function_payload.zip")
   handler = "index.handler"
-  role    = aws_iam_role.lambda-role.arn
+  role    = aws_iam_role.role.arn
   runtime = "nodejs16.x"
   # vpc_config {
   #   subnet_ids         = [aws_subnet.example.id]
@@ -59,6 +59,6 @@ data "aws_iam_policy_document" "example" {
 
 resource "aws_iam_role_policy" "lambda-role-policy" {
   policy = data.aws_iam_policy_document.example.json
-  role   = aws_iam_role.lambda-role.id
+  role   = aws_iam_role.role.id
   name   = "${var.prefix}-my-lambda-policy"
 }

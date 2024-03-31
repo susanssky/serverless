@@ -28,7 +28,7 @@ resource "aws_api_gateway_integration" "integration" {
   integration_http_method = "POST"
   type                    = "AWS"
   uri                     = aws_lambda_function.lambda-function[index(var.file_name, "home")].invoke_arn
-  # credentials             = aws_iam_role.lambda-role.arn
+  # credentials             = aws_iam_role.role.arn
 }
 
 resource "aws_api_gateway_method_response" "method-response-200" {

@@ -26,7 +26,7 @@ resource "aws_cognito_user_pool" "cognito-pool" {
 
   sms_configuration {
     external_id    = "example"
-    sns_caller_arn = aws_iam_role.iam-role.arn
+    sns_caller_arn = aws_iam_role.role.arn
   }
 
   ## Sign-up experience
@@ -66,27 +66,37 @@ resource "aws_cognito_user_pool" "cognito-pool" {
 
 }
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = "${var.prefix}-auth"
+  domain       = "${var.prefix}-domain"
   user_pool_id = aws_cognito_user_pool.cognito-pool.id
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name                                 = "${var.prefix}-client-name"
+  name                                 = "${var.prefix}-client"
   user_pool_id                         = aws_cognito_user_pool.cognito-pool.id
   callback_urls                        = ["http://localhost:5500/4-cognito/logged_in.html"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_flows                  = ["implicit"]
   allowed_oauth_scopes                 = ["email", "openid", "phone"]
-  supported_identity_providers         = ["COGNITO"]
+  supported_identity_providers         = ["COGNITO", "Google"]
   logout_urls                          = ["http://localhost:5500/4-cognito/logged_out.html"]
+  depends_on                           = [aws_cognito_identity_provider.example_provider]
 }
 
-# for logging in
-output "logged-in-link" {
-  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.eu-west-2.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=code&scope=${join("+", aws_cognito_user_pool_client.client.allowed_oauth_scopes)}&redirect_uri=${var.app_domain}/logged_in.html"
+resource "aws_cognito_identity_provider" "example_provider" {
+  user_pool_id  = aws_cognito_user_pool.cognito-pool.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  provider_details = {
+    authorize_scopes = "email"
+    client_id        = "00000000000000000.apps.googleusercontent.com"
+    client_secret    = "GOCSPX-000000000000000000000"
+  }
+
+  attribute_mapping = {
+    email    = "email"
+    username = "sub"
+  }
 }
 
-# for logging out
-output "logged-out-link" {
-  value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.eu-west-2.amazoncognito.com/logout?client_id=${aws_cognito_user_pool_client.client.id}&logout_uri=${var.app_domain}/logged_out.html"
-}
+
